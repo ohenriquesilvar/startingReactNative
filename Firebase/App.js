@@ -1,6 +1,6 @@
 import Firebase from './src/firebase';
 import React, {Component} from 'react';
-import {Text, View, Button} from 'react-native';
+import {View, Button} from 'react-native';
 
 class App extends Component {
   cadastrarUsuario() {
