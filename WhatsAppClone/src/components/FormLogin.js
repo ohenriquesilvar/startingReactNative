@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
@@ -7,50 +7,74 @@ import {
   TouchableHighlight,
   StyleSheet,
   ImageBackground,
+  ActivityIndicator,
 } from 'react-native';
 
 import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
-import {modificaEmail, modificaSenha} from './../actions/AutenticacaoActions';
+import {
+  modificaEmail,
+  modificaSenha,
+  autenticarUsuario,
+} from './../actions/AutenticacaoActions';
 
-const FormLogin = props => {
-  console.log(props);
+class FormLogin extends Component {
+  _autenticaUsuario() {
+    const {email, senha} = this.props;
+    this.props.autenticarUsuario({email, senha});
+  }
 
-  return (
-    <ImageBackground style={{flex: 1}} source={require('../imgs/original.png')}>
-      <View style={styles.view}>
-        <View style={styles.logo}>
-          <Text style={styles.textLogo}>WhatsApp Clone</Text>
+  renderBtnAcessar() {
+    if (this.props.loading_login) {
+      return <ActivityIndicator size="large" />;
+    }
+    return (
+      <Button
+        title="Acessar"
+        color="#115E54"
+        onPress={() => this._autenticaUsuario()}
+      />
+    );
+  }
+
+  render() {
+    return (
+      <ImageBackground
+        style={{flex: 1}}
+        source={require('../imgs/original.png')}>
+        <View style={styles.view}>
+          <View style={styles.logo}>
+            <Text style={styles.textLogo}>WhatsApp Clone</Text>
+          </View>
+          <View style={styles.flex2}>
+            <TextInput
+              value={this.props.email}
+              style={styles.inputs}
+              placeholder="E-mail"
+              placeholderTextColor="#fff"
+              onChangeText={texto => this.props.modificaEmail(texto)}
+            />
+            <TextInput
+              style={styles.inputs}
+              secureTextEntry
+              value={this.props.senha}
+              placeholder="Senha"
+              placeholderTextColor="#fff"
+              onChangeText={texto => this.props.modificaSenha(texto)}
+            />
+            <Text style={styles.erro}>{this.props.erroLogin}</Text>
+            <TouchableHighlight onPress={Actions.cadastro}>
+              <Text value={this.props.senha} style={styles.cadastrar}>
+                Ainda não tem cadastro? Cadastre-se
+              </Text>
+            </TouchableHighlight>
+          </View>
+          <View style={styles.flex2}>{this.renderBtnAcessar()}</View>
         </View>
-        <View style={styles.flex2}>
-          <TextInput
-            value={props.email}
-            style={styles.inputs}
-            placeholder="E-mail"
-            placeholderTextColor="#fff"
-            onChangeText={texto => props.modificaEmail(texto)}
-          />
-          <TextInput
-            style={styles.inputs}
-            secureTextEntry
-            value={props.senha}
-            placeholder="Senha"
-            placeholderTextColor="#fff"
-            onChangeText={texto => props.modificaSenha(texto)}
-          />
-          <TouchableHighlight onPress={Actions.cadastro}>
-            <Text value={props.senha} style={styles.cadastrar}>
-              Ainda não tem cadastro? Cadastre-se
-            </Text>
-          </TouchableHighlight>
-        </View>
-        <View style={styles.flex2}>
-          <Button title="Acessar" color="#115E54" onPress={() => false} />
-        </View>
-      </View>
-    </ImageBackground>
-  );
-};
+      </ImageBackground>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   view: {flex: 1, padding: 10},
@@ -64,14 +88,17 @@ const styles = StyleSheet.create({
   flex2: {flex: 2, justifyContent: 'center'},
   inputs: {fontSize: 20, height: 45, color: '#fff'},
   cadastrar: {fontSize: 20, textAlign: 'center', marginTop: 15, color: '#fff'},
+  erro: {color: 'red', fontSize: 18, textAlign: 'center'},
 });
 
 const mapStatetoProps = state => ({
   email: state.AutenticacaoReducer.email,
   senha: state.AutenticacaoReducer.senha,
+  erroLogin: state.AutenticacaoReducer.erroLogin,
+  loading_login: state.AutenticacaoReducer.loading_login,
 });
 
 export default connect(
   mapStatetoProps,
-  {modificaEmail, modificaSenha},
+  {modificaEmail, modificaSenha, autenticarUsuario},
 )(FormLogin);
