@@ -28,7 +28,6 @@ const Routes = () => {
           hideNavBar
         />
         <Scene
-          initial
           key="principal"
           component={Principal}
           title="Principal"

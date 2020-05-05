@@ -55,6 +55,7 @@ export const cadastraUsuario = ({nome, email, senha}) => {
 const cadastroUsuarioSucesso = dispatch => {
   dispatch({
     type: CADASTRO_USUARIO_SUCESSO,
+    payload: false,
   });
 
   Actions.boasvindas();

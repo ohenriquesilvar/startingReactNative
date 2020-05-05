@@ -9,8 +9,10 @@ import {
 } from 'react-native';
 import {TabBar} from 'react-native-tab-view';
 import {Actions} from 'react-native-router-flux';
+import {connect} from 'react-redux';
+import {habilitarInclusaoContato} from './../actions/AppActions';
 
-export default props => (
+const TabBarMenu = props => (
   <View
     style={{
       backgroundColor: '#115e54',
@@ -33,7 +35,10 @@ export default props => (
         }}>
         <View style={{width: 50, justifyContent: 'center'}}>
           <TouchableHighlight
-            onPress={() => Actions.adicionar()}
+            onPress={() => {
+              Actions.adicionar();
+              props.habilitarInclusaoContato();
+            }}
             underlayColor="#114d44">
             <Image source={require('../imgs/add.png')} />
           </TouchableHighlight>
@@ -48,6 +53,13 @@ export default props => (
     <TabBar {...props} style={{backgroundColor: '#115e54', elevation: 0}} />
   </View>
 );
+
+const mapStateToProps = state => ({});
+
+export default connect(
+  mapStateToProps,
+  {habilitarInclusaoContato},
+)(TabBarMenu);
 
 const styles = StyleSheet.create({
   view: {
