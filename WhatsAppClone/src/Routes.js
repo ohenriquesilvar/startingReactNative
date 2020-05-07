@@ -6,6 +6,7 @@ import FormCadastro from './components/FormCadastro';
 import BoasVindas from './components/BoasVindas';
 import Principal from './components/Principal';
 import AdicionarContato from './components/AdicionarContato';
+import Conversa from './components/Conversa';
 
 const Routes = () => {
   return (
@@ -37,6 +38,12 @@ const Routes = () => {
           key="adicionar"
           component={AdicionarContato}
           title="Adicionar Contato"
+          titleStyle={{flex: 1, textAlign: 'center', color: '#fff'}}
+        />
+        <Scene
+          key="conversa"
+          component={Conversa}
+          title="Conversa"
           titleStyle={{flex: 1, textAlign: 'center', color: '#fff'}}
         />
       </Scene>

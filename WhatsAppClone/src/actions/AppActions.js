@@ -1,5 +1,4 @@
 import Firebase from '../firebase';
-import {Actions} from 'react-native-router-flux';
 import b64 from 'base-64';
 import _ from 'lodash';
 import {
@@ -7,6 +6,7 @@ import {
   ADICIONA_CONTATO_ERRO,
   ADICIONA_CONTATO_SUCESSO,
   LISTA_CONTATO_USUARIO,
+  MODIFICA_MENSAGEM,
 } from './types';
 
 export const modificaAdicionaContatoEmail = texto => {
@@ -18,21 +18,20 @@ export const modificaAdicionaContatoEmail = texto => {
 
 export const adicionaContato = email => {
   return dispatch => {
-    let emailb64 = b64.encode(email);
+    var emailB64 = b64.encode(email);
     Firebase.database()
-      .ref(`/contatos/${emailb64}`)
+      .ref(`contatos/ ${emailB64}`)
       .once('value')
       .then(snapshot => {
         if (snapshot.val()) {
           const dadosUsuario = _.first(_.values(snapshot.val()));
-          console.log(dadosUsuario.nome);
 
           const {currentUser} = Firebase.auth();
-          let emailUsuarioB64 = b64.encode(currentUser.email);
+          var emailUsuarioB64 = b64.encode(currentUser.email);
 
           Firebase.database()
-            .ref(`/usuario_contatos/${emailUsuarioB64}`)
-            .push({email, nome: dadosUsuario.nome})
+            .ref(`/usuario_contatos/ ${emailUsuarioB64}`)
+            .push({email: email, nome: dadosUsuario.nome})
             .then(() => adicionaContatoSucesso(dispatch))
             .catch(erro => adicionaContatoErro(erro.message, dispatch));
         } else {
@@ -51,12 +50,11 @@ const adicionaContatoSucesso = dispatch =>
     payload: true,
   });
 
-const adicionaContatoErro = (erro, dispatch) => {
+const adicionaContatoErro = (erro, dispatch) =>
   dispatch({
     type: ADICIONA_CONTATO_ERRO,
     payload: erro,
   });
-};
 
 export const habilitarInclusaoContato = () => {
   return {
@@ -71,11 +69,23 @@ export const contatosUsuarioFetch = () => {
     let emailUsuarioB64 = b64.encode(currentUser.email);
 
     Firebase.database()
-      .ref(`/usuario_contatos/${emailUsuarioB64}`)
+      .ref(`/usuario_contatos/ ${emailUsuarioB64}`)
       .on('value', snapshot => {
-        console.log(snapshot.val());
-
         dispatch({type: LISTA_CONTATO_USUARIO, payload: snapshot.val()});
       });
+  };
+};
+
+export const modificaMensagem = texto => {
+  return {
+    type: MODIFICA_MENSAGEM,
+    payload: texto,
+  };
+};
+
+export const enviarMensagem = mensagem => {
+  console.log(mensagem);
+  return {
+    type: 'xyz',
   };
 };
