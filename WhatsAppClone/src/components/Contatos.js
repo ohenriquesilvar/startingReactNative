@@ -26,11 +26,18 @@ class Contatos extends Component {
 
   render() {
     return (
-      <TouchableHighlight onPress={() => Actions.conversa()}>
-        <ListView
-          enableEmptySections
-          dataSource={this.fonteDeDados}
-          renderRow={data => (
+      <ListView
+        enableEmptySections
+        dataSource={this.fonteDeDados}
+        renderRow={data => (
+          <TouchableHighlight
+            onPress={() =>
+              Actions.conversa({
+                title: data.nome,
+                contatoNome: data.nome,
+                contatoEmail: data.email,
+              })
+            }>
             <View
               style={{
                 flex: 1,
@@ -41,9 +48,9 @@ class Contatos extends Component {
               <Text style={{fontSize: 25}}>{data.nome}</Text>
               <Text style={{fontSize: 18}}>{data.email}</Text>
             </View>
-          )}
-        />
-      </TouchableHighlight>
+          </TouchableHighlight>
+        )}
+      />
     );
   }
 }

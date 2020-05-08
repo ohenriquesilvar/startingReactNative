@@ -4,7 +4,15 @@ import {View, Text, TextInput, Image, TouchableHighlight} from 'react-native';
 import {modificaMensagem, enviarMensagem} from '../actions/AppActions';
 
 class Conversa extends Component {
+  _enviaMensagem() {
+    const {mensagem, contatoNome, contatoEmail} = this.props;
+
+    this.props.enviarMensagem(mensagem, contatoNome, contatoEmail);
+  }
+
   render() {
+    console.log(this.props);
+
     return (
       <View
         style={{
@@ -23,7 +31,7 @@ class Conversa extends Component {
           />
 
           <TouchableHighlight
-            onPress={() => this.props.enviarMensagem(this.props.mensagem)}
+            onPress={() => this._enviaMensagem()}
             underlayColor="#fff">
             <Image source={require('../imgs/enviar_mensagem.png')} />
           </TouchableHighlight>

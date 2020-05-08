@@ -7,6 +7,7 @@ import {
   ADICIONA_CONTATO_SUCESSO,
   LISTA_CONTATO_USUARIO,
   MODIFICA_MENSAGEM,
+  LISTA_CONVERSA_USUARIO,
 } from './types';
 
 export const modificaAdicionaContatoEmail = texto => {
@@ -83,9 +84,54 @@ export const modificaMensagem = texto => {
   };
 };
 
-export const enviarMensagem = mensagem => {
-  console.log(mensagem);
-  return {
-    type: 'xyz',
+export const enviarMensagem = (mensagem, contatoNome, contatoEmail) => {
+  const {currentUser} = Firebase.auth();
+  const usuarioEmailb64 = b64.encode(currentUser.email);
+
+  return dispatch => {
+    const contatoEmailb64 = b64.encode(contatoEmail);
+
+    Firebase.database()
+      .ref(`/mensagens/ ${usuarioEmailb64}/ ${contatoEmailb64}`)
+      .push({mensagem, tipo: 'e'})
+      .then(() => {
+        Firebase.database()
+          .ref(`/mensagens/ ${contatoEmailb64}/ ${usuarioEmailb64}`)
+          .push({mensagem, tipo: 'r'})
+          .then(() =>
+            dispatch({
+              type: 'xyz',
+            }),
+          );
+      })
+      .then(() => {
+        Firebase.database()
+          .ref(`usuario_conversas/${usuarioEmailb64}/${contatoEmailb64}`)
+          .set({nome: contatoNome, email: contatoEmail});
+      })
+      .then(() => {
+        Firebase.database()
+          .ref(`/contatos/ ${usuarioEmailb64}`)
+          .once('value')
+          .then(snapshot => {
+            let dadosUsuario = _.first(_.values(snapshot.val()));
+            Firebase.database()
+              .ref(`usuario_conversas/${contatoEmailb64}/${usuarioEmailb64}`)
+              .set({nome: dadosUsuario.nome, email: currentUser.email});
+          });
+      });
+  };
+};
+
+export const conversaUsuarioFetch = contatoEmail => {
+  const {currentUser} = Firebase.auth();
+  const usuarioEmailb64 = b64.encode(currentUser.email);
+  let contatoEmailB64 = b64.encode(contatoEmail);
+  return dispatch => {
+    Firebase.database()
+      .ref(`/mensagens/ ${usuarioEmailb64}/ ${contatoEmailB64}`)
+      .on('value', snapshot => {
+        dispatch({type: LISTA_CONVERSA_USUARIO, payload: snapshot.val()});
+      });
   };
 };
