@@ -10,6 +10,7 @@ import {
 import {TabBar} from 'react-native-tab-view';
 import {Actions} from 'react-native-router-flux';
 import {connect} from 'react-redux';
+import Firebase from '../firebase';
 import {habilitarInclusaoContato} from './../actions/AppActions';
 
 const TabBarMenu = props => (
@@ -44,7 +45,13 @@ const TabBarMenu = props => (
           </TouchableHighlight>
         </View>
         <View style={{justifyContent: 'center'}}>
-          <TouchableHighlight underlayColor="#114d44">
+          <TouchableHighlight
+            underlayColor="#114d44"
+            onPress={() =>
+              Firebase.auth()
+                .signOut()
+                .then(() => Actions.login())
+            }>
             <Text style={{fontSize: 20, color: '#fff'}}>Sair</Text>
           </TouchableHighlight>
         </View>

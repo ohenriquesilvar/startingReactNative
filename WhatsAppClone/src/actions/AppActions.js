@@ -8,6 +8,7 @@ import {
   LISTA_CONTATO_USUARIO,
   MODIFICA_MENSAGEM,
   LISTA_CONVERSA_USUARIO,
+  LISTA_CONVERSAS_USUARIO,
 } from './types';
 
 export const modificaAdicionaContatoEmail = texto => {
@@ -119,6 +120,10 @@ export const enviarMensagem = (mensagem, contatoNome, contatoEmail) => {
               .ref(`usuario_conversas/${contatoEmailb64}/${usuarioEmailb64}`)
               .set({nome: dadosUsuario.nome, email: currentUser.email});
           });
+        dispatch({
+          type: MODIFICA_MENSAGEM,
+          payload: '',
+        });
       });
   };
 };
@@ -132,6 +137,20 @@ export const conversaUsuarioFetch = contatoEmail => {
       .ref(`/mensagens/ ${usuarioEmailb64}/ ${contatoEmailB64}`)
       .on('value', snapshot => {
         dispatch({type: LISTA_CONVERSA_USUARIO, payload: snapshot.val()});
+      });
+  };
+};
+
+export const conversasUsuarioFetch = () => {
+  const {currentUser} = Firebase.auth();
+
+  return dispatch => {
+    let emailUsuarioB64 = b64.encode(currentUser.email);
+
+    Firebase.database()
+      .ref(`/usuario_conversas/${emailUsuarioB64}`)
+      .on('value', snapshot => {
+        dispatch({type: LISTA_CONVERSAS_USUARIO, payload: snapshot.val()});
       });
   };
 };
